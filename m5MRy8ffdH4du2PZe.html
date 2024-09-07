@@ -101,7 +101,7 @@
 <div id="startScreen">
   <h1>지렁이의 식품군 탐험</h1>
   <div id="creator">(재연쌤이 만들었음V)</div>
-  <div id="source">출처@gajae_ssam</div>
+  <div id="source">출처: blog.naver.com/gajae_ssam</div>
   <input type="text" id="nicknameInput" placeholder="닉네임을 입력하세요" maxlength="10">
   <button id="startButton">게임 시작</button>
   <div id="rules">
@@ -157,17 +157,21 @@ let nickname = '';
 let timeLeft = 60; // 1분 = 60초
 
 const missions = [
-  { type: '곡류', foods: ['밥', '빵', '국수', '옥수수', '감자'], color: '#FFE4B5' },
-  { type: '고기, 생선, 달걀, 콩류', foods: ['두부', '소고기', '닭고기', '달걀', '연어'], color: '#FFD700' },
-  { type: '우유, 유제품류', foods: ['우유', '치즈', '요구르트'], color: '#F0FFFF' },
-  { type: '채소류와 과일류', foods: ['사과', '바나나', '당근', '브로콜리', '토마토'], color: '#98FB98' },
+  { type: '곡류', foods: ['밥', '빵', '국수', '옥수수', '감자', '쌀', '보리', '귀리', '수수', '라면'], color: '#FFE4B5' },
+  { type: '고기, 생선, 달걀, 콩류', foods: ['두부', '소고기', '닭고기', '달걀', '연어', '돼지고기', '참치', '오징어', '콩', '새우'], color: '#FFD700' },
+  { type: '우유, 유제품류', foods: ['우유', '치즈', '요구르트', '크림', '아이스크림', '코티지치즈', '그릭요거트'], color: '#F0FFFF' },
+  { type: '채소류와 과일류', foods: ['사과', '바나나', '당근', '브로콜리', '토마토', '오이', '배추', '시금치', '포도', '복숭아'], color: '#98FB98' },
 ];
 
 const foodEmojis = {
   '밥': '🍚', '빵': '🍞', '국수': '🍜', '옥수수': '🌽', '감자': '🥔',
+  '쌀': '🌾', '보리': '🌿', '귀리': '🍃', '수수': '🌱', '라면': '🍲',
   '두부': '🧊', '소고기': '🥩', '닭고기': '🍗', '달걀': '🥚', '연어': '🍣',
-  '우유': '🥛', '치즈': '🧀', '요구르트': '🍶',
-  '사과': '🍎', '바나나': '🍌', '당근': '🥕', '브로콜리': '🥦', '토마토': '🍅'
+  '돼지고기': '🍖', '참치': '🐟', '오징어': '🦑', '콩': '🫘', '새우': '🦐',
+  '우유': '🥛', '치즈': '🧀', '요구르트': '🍶', '크림': '🍦',
+  '아이스크림': '🍨', '코티지치즈': '🥗', '그릭요거트': '🥣',
+  '사과': '🍎', '바나나': '🍌', '당근': '🥕', '브로콜리': '🥦', '토마토': '🍅',
+  '오이': '🥒', '배추': '🥬', '시금치': '🍃', '포도': '🍇', '복숭아': '🍑'
 };
 
 function generateFood() {
@@ -220,8 +224,8 @@ function init() {
 }
 
 function updateFoodCount() {
-  const baseCount = 60;
-  const additionalCount = Math.floor(score / 150);
+  const baseCount = 80;
+  const additionalCount = Math.floor(score / 100);
   const totalCount = baseCount + additionalCount;
   
   while (food.length < totalCount) {
@@ -343,7 +347,7 @@ function draw() {
 
   ctx.fillStyle = '#4a4a4a';
   ctx.font = 'bold 32px Arial';
-  ctx.fillText(`${nickname}: ${score}점`, canvas.width - 300, 50);
+  ctx.fillText(`${nickname}: ${score}점`, 20, canvas.height - 20);
 }
 
 function updateTimer() {
