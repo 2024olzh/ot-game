@@ -53,7 +53,7 @@
   #game-container {
     width: 400px;
     height: 600px;
-    background-color: #E0F6FF; /* Pastel sky blue color */
+    background-color: #E0F6FF; 
     border: 3px solid #FF69B4;
     border-radius: 20px;
     position: relative;
@@ -169,6 +169,10 @@
     left: 10%;
     filter: blur(2px);
   }
+  .candy.moving {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
   #drop-zone {
     width: 360px;
     height: 50px;
@@ -179,6 +183,7 @@
     padding: 0 10px;
     box-sizing: border-box;
     border-radius: 10px;
+    margin-bottom: 10px;
   }
   #next-candy {
     width: 60px;
@@ -211,25 +216,11 @@
     color: #000000;
     margin: 20px 0;
   }
-  #preview-candy {
-    position: absolute;
-    top: 50px;
-    pointer-events: none;
-    opacity: 0.7;
-    transition: left 0.1s ease-out;
-    transform: rotateX(10deg) rotateY(10deg);
-    box-shadow: 
-      inset -5px -5px 10px rgba(0,0,0,0.2),
-      inset 5px 5px 10px rgba(255,255,255,0.5),
-      2px 2px 5px rgba(0,0,0,0.2);
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-  }
   #tear-line {
     width: 100%;
     height: 2px;
     background-image: linear-gradient(to right, #FF69B4 50%, transparent 50%);
     background-size: 10px 2px;
-    margin-top: 10px;
   }
 </style>
 </head>
@@ -238,14 +229,15 @@
     <h1>생애주기 비눗방울 게임</h1>
     <div id="credits">
       재연쌤이 만들었음(＾▽＾)V<br>
-      출처: <a href="https://blog.naver.com/gajae_ssam" target="_blank">blog.naver.com/gajae_ssam</a>
+      출처: <a href="https://blog.naver.com/gajae_ssam" target="_blank">blog.naver.com/gajae_ssam</a><br>
+      (블로그에 더 많은 자료가 있어욥)
     </div>
     <div id="rules">
-      1. 같은 생애 주기 비눗방울을 합쳐 더 높은 단계로 만드세요.<br>
-      2. 많이 합칠수록 점수가 올라갑니다.<br>
-      3. 생애 주기 단계가 높아질수록 더 많은 점수를 획득할 수 있습니다.<br>
-      4. 비눗방울이 절취선에 닿으면 게임 종료! 최고 점수에 도전하세요!<br><br>
-      ⭐ <strong>팁</strong>: 생애 주기 비눗방울은 가만히 있지 않아요! <strong>가라앉기</strong>도 하고 <strong>튀어 오르기</strong>도 하니, <strong>예측 불가능</strong>한 움직임을 잘 활용해 많이 합쳐보세요. 마치 <strong>인생처럼</strong>, 어디로 흘러갈지 모른답니다!
+      1. 절취선에서 마우스 포인터를 따라 비눗방울이 움직입니다.<br>
+      2. 같은 단계의 비눗방울을 합쳐 더 높은 단계로 만드세요.<br>
+      3. 많이 합칠수록 점수가 올라가고, 생애 주기 단계가 높아질수록 더 많은 점수를 획득할 수 있습니다.<br>
+      4. 비눗방울이 절취선에 닿으면 게임 종료!<br><br>
+      ⭐ <strong>팁</strong>: 비눗방울은 가만히 있지 않아요! <strong>가라앉기</strong>도 하고 <strong>튀어 오르기</strong>도 하니, <strong>예측 불가능</strong>한 움직임을 잘 활용해 많이 합쳐보세요. 마치 <strong>인생처럼</strong>, 어디로 흘러갈지 모른답니다!
     </div>
     <input type="text" id="nickname" placeholder="닉네임을 입력하세요">
     <button id="start-button">게임 시작!</button>
@@ -257,7 +249,6 @@
       <div id="score">점수: 0</div>
     </div>
     <div id="tear-line"></div>
-    <div id="preview-candy"></div>
   </div>
 
   <div id="end-screen">
@@ -268,18 +259,19 @@
 
 <script>
 const stages = [
-  { name: '영유아기', color: '#FFB3BA', size: 40, emoji: '👶' },
-  { name: '아동기', color: '#FFDFBA', size: 55, emoji: '🍭' },
-  { name: '청소년기', color: '#FFFFBA', size: 70, emoji: '🎧' },
-  { name: '성년기', color: '#BAFFC9', size: 85, emoji: '💼' },
-  { name: '중년기', color: '#BAE1FF', size: 100, emoji: '🏡' },
-  { name: '노년기', color: '#E1BAFF', size: 115, emoji: '🌺' }
+  { name: '영유아기', color: '#FFB3BA', size: 60, emoji: '👶' },
+  { name: '아동기', color: '#FFDFBA', size: 60, emoji: '🍭' },
+  { name: '청소년기', color: '#FFFFBA', size: 60, emoji: '🎧' },
+  { name: '성년기', color: '#BAFFC9', size: 60, emoji: '💼' },
+  { name: '중년기', color: '#BAE1FF', size: 60, emoji: '🏡' },
+  { name: '노년기', color: '#E1BAFF', size: 60, emoji: '🌺' }
 ];
 
 let candies = [];
 let nextCandyStage = 0;
 let score = 0;
 let playerNickname = "";
+let currentCandy = null;
 
 document.getElementById('start-button').addEventListener('click', startGame);
 document.getElementById('restart-button').addEventListener('click', restartGame);
@@ -292,7 +284,6 @@ function startGame() {
   }
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-container').style.display = 'flex';
-  createPreviewCandy();
   updateNextCandy();
   updateScore();
 }
@@ -303,37 +294,8 @@ function restartGame() {
   candies = [];
   document.getElementById('end-screen').style.display = 'none';
   document.getElementById('game-container').style.display = 'flex';
-  createPreviewCandy();
   updateNextCandy();
   updateScore();
-}
-
-function createPreviewCandy() {
-  previewCandy = document.createElement('div');
-  previewCandy.id = 'preview-candy';
-  previewCandy.className = 'candy';
-  document.getElementById('game-container').appendChild(previewCandy);
-  updatePreviewCandy();
-}
-
-function updatePreviewCandy() {
-  previewCandy.style.backgroundColor = stages[nextCandyStage].color;
-  
-  previewCandy.innerHTML = '';
-  const emojiSpan = document.createElement('span');
-  emojiSpan.className = 'emoji';
-  emojiSpan.textContent = stages[nextCandyStage].emoji;
-  
-  const nameSpan = document.createElement('span');
-  nameSpan.className = 'name';
-  nameSpan.textContent = stages[nextCandyStage].name;
-  
-  previewCandy.appendChild(emojiSpan);
-  previewCandy.appendChild(nameSpan);
-  
-  const size = stages[nextCandyStage].size;
-  previewCandy.style.width = size + 'px';
-  previewCandy.style.height = size + 'px';
 }
 
 function checkGameOver() {
@@ -402,18 +364,11 @@ function updateNextCandy() {
   nextCandy.appendChild(emojiSpan);
   nextCandy.appendChild(nameSpan);
   
-  updatePreviewCandy();
+  updateScore();
 }
 
 function updateScore() {
   document.getElementById('score').textContent = `${playerNickname}: ${score}`;
-}
-
-function dropCandy(x) {
-  const candy = createCandy(x, nextCandyStage);
-  candies.push(candy);
-  updateNextCandy();
-  moveCandy(candy);
 }
 
 function moveCandy(candy) {
@@ -438,6 +393,10 @@ function moveCandy(candy) {
     const collisions = checkCollisionsWithOtherCandies(candy);
     if (collisions.length > 0) {
       handleCollisions(candy, collisions);
+      if (!document.body.contains(candy)) {
+        clearInterval(intervalId);
+        return;
+      }
       const lowestCollision = collisions.reduce((lowest, current) => {
         const currentTop = parseFloat(current.style.top);
         return currentTop < lowest ? currentTop : lowest;
@@ -466,15 +425,33 @@ function moveCandy(candy) {
     if (Math.abs(vx) < 0.1 && Math.abs(vy) < 0.1 && (y >= 549 - parseFloat(candy.style.height) || collisions.length > 0)) {
       clearInterval(intervalId);
       candy.dataset.settled = 'true';
+      checkAdjacentCandies(candy);  
       checkGameOver();
-      setInterval(() => {
-        const collisions = checkCollisionsWithOtherCandies(candy);
-        if (collisions.length > 0) {
-          handleCollisions(candy, collisions);
-        }
-      }, 100);
     }
   }, 20);
+}
+
+function checkAdjacentCandies(candy) {
+  const stage = parseInt(candy.dataset.stage);
+  const rect1 = candy.getBoundingClientRect();
+  
+  for (let other of candies) {
+    if (other === candy || parseInt(other.dataset.stage) !== stage) continue;
+    
+    const rect2 = other.getBoundingClientRect();
+    if (isAdjacent(rect1, rect2)) {
+      mergeCandies(candy, other);
+      break;  
+    }
+  }
+}
+
+function isAdjacent(rect1, rect2) {
+  const spacing = 5;  
+  return !(rect1.right + spacing < rect2.left || 
+           rect1.left - spacing > rect2.right || 
+           rect1.bottom + spacing < rect2.top || 
+           rect1.top - spacing > rect2.bottom);
 }
 
 function checkCollisionsWithOtherCandies(candy) {
@@ -491,7 +468,7 @@ function checkCollisionsWithOtherCandies(candy) {
 }
 
 function isColliding(rect1, rect2) {
-  const spacing = 0.01; 
+  const spacing = -5; 
   return !(rect1.right + spacing < rect2.left || 
            rect1.left - spacing > rect2.right || 
            rect1.bottom + spacing < rect2.top || 
@@ -531,26 +508,9 @@ function handleCollisions(candy, collisions) {
     if (candy.dataset.stage === other.dataset.stage) {
       mergeCandies(candy, other);
       return;
-    } else {
-      resolveCollision(candy, other);
     }
   }
-  
-  const allCandies = [...candies];
-  for (let i = 0; i < allCandies.length; i++) {
-    for (let j = i + 1; j < allCandies.length; j++) {
-      const rect1 = allCandies[i].getBoundingClientRect();
-      const rect2 = allCandies[j].getBoundingClientRect();
-      if (isColliding(rect1, rect2)) {
-        if (allCandies[i].dataset.stage === allCandies[j].dataset.stage) {
-          mergeCandies(allCandies[i], allCandies[j]);
-          return; 
-        } else {
-          resolveCollision(allCandies[i], allCandies[j]);
-        }
-      }
-    }
-  }
+  checkAdjacentCandies(candy);
 }
 
 function mergeCandies(candy1, candy2) {
@@ -569,24 +529,49 @@ function mergeCandies(candy1, candy2) {
     
     score += (newStage + 1) * 10;
     updateScore();
-
+    
     newCandy.style.transform = 'scale(1.2)';
     newCandy.style.transition = 'transform 0.2s ease-out';
     setTimeout(() => {
       newCandy.style.transform = 'scale(1)';
+      checkAdjacentCandies(newCandy);  
     }, 200);
   }
 }
 
 document.getElementById('game-container').addEventListener('mousemove', (e) => {
   const rect = e.target.getBoundingClientRect();
-  const x = e.clientX - rect.left - stages[nextCandyStage].size / 2;
-  previewCandy.style.left = `${Math.max(0, Math.min(400 - stages[nextCandyStage].size, x))}px`;
+  const x = e.clientX - rect.left - 30;
+
+  if (!currentCandy) {
+    currentCandy = createCandy(Math.max(0, Math.min(340, x)), nextCandyStage);
+    currentCandy.style.pointerEvents = 'none';
+    currentCandy.classList.add('moving');
+  }
+
+  currentCandy.style.left = Math.max(0, Math.min(340, x)) + 'px';
+  currentCandy.style.top = '50px'; 
 });
 
-document.getElementById('game-container').addEventListener('click', (e) => {
-  const x = parseFloat(previewCandy.style.left);
-  dropCandy(x);
+document.getElementById('game-container').addEventListener('mouseleave', () => {
+  if (currentCandy) {
+    dropCandy();
+  }
 });
+
+document.getElementById('game-container').addEventListener('click', () => {
+  if (currentCandy) {
+    dropCandy();
+  }
+});
+
+function dropCandy() {
+  currentCandy.style.pointerEvents = 'auto';
+  candies.push(currentCandy);
+  moveCandy(currentCandy);
+  updateNextCandy();
+  currentCandy.classList.remove('moving');
+  currentCandy = null;
+}
 </script>
 </body></html>
