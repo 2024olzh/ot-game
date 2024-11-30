@@ -1,0 +1,352 @@
+<html><head><base href="." /><title>🌟 단짱단짱 🌟</title><style>
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+}
+
+#startScreen, #endScreen, #gameContainer {
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    margin: 20px auto;
+}
+
+#endScreen {
+    display: none;
+}
+
+#gameContainer {
+    display: none;
+}
+
+#startTitle, #endTitle {
+    font-size: 48px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#startDescription, #endDescription {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+#startButton, #restartButton {
+    padding: 15px 40px;
+    font-size: 24px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+#startButton:hover, #restartButton:hover {
+    transform: scale(1.05);
+    background: #45a049;
+}
+
+#grid {
+    display: grid;
+    gap: 5px;
+    margin: 20px auto;
+    justify-content: center;
+}
+
+.word-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(173,216,230,0.4));
+    border: 2px solid rgba(255,255,255,0.6);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    color: #333;
+    transition: all 0.3s;
+    position: relative;
+    box-shadow: 
+        inset 2px 2px 5px rgba(255,255,255,0.8),
+        2px 2px 10px rgba(0,0,0,0.1);
+    animation: float 3s ease-in-out infinite;
+}
+
+.word-cell:nth-child(odd) {
+    animation-delay: 0.5s;
+}
+
+.word-cell:nth-child(3n) {
+    animation-delay: 1s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.word-cell:hover {
+    transform: scale(1.1);
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(173,216,230,0.6));
+}
+
+#timer {
+    font-size: 24px;
+    margin: 20px;
+    color: #333;
+}
+
+#target {
+    font-size: 24px;
+    color: #ff4444;
+    margin: 20px;
+}
+
+#level {
+    font-size: 20px;
+    color: #666;
+    margin: 10px;
+}
+
+.correct {
+    background: radial-gradient(circle at 30% 30%, rgba(144,238,144,0.8), rgba(144,238,144,0.4)) !important;
+    animation: pop 0.3s ease-out !important;
+}
+
+.wrong {
+    background: radial-gradient(circle at 30% 30%, rgba(255,182,193,0.8), rgba(255,182,193,0.4)) !important;
+    animation: shake 0.5s ease-in-out !important;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@media (max-width: 480px) {
+    #startScreen, #endScreen, #gameContainer {
+        padding: 20px;
+    }
+    
+    #startTitle, #endTitle {
+        font-size: 36px;
+    }
+    
+    #startDescription, #endDescription {
+        font-size: 16px;
+    }
+    
+    .word-cell {
+        width: 40px; /* Further reduced for mobile */
+        height: 40px; /* Further reduced for mobile */
+        font-size: 10px; /* Further reduced font size */
+    }
+}
+</style></head><body>
+<div id="startScreen">
+    <h1 id="startTitle">🌟 단짱단짱 🌟</h1>
+    <div id="startDescription">
+        최대한 빨리! 다른 단어를 찾아 단어짱이 되어보세요!<br>
+        5초 안에 완료하지 못하면 다음 단계로 갈 수 없답니다. 😲<br><br>
+        🎯 게임 규칙 🎯<br>
+        1️⃣ 1단계: 단어 4개 중 다른 단어 찾기!<br>
+        2️⃣ 2단계: 단어 9개 중 다른 단어 찾기!<br>
+        3️⃣ 3단계: 단어 16개 중 다른 단어 찾기!<br>
+        4️⃣ 4단계: 단어 25개 중 다른 단어 찾기!<br>
+        5️⃣ 5단계: 단어 36개 중 다른 단어 찾기!<br>
+        6️⃣ 6단계: 단어 49개 중 다른 단어 찾기!<br>
+        7️⃣ 7단계: 단어 64개에서 최종 도전! 🏆<br><br>
+        준비되셨나요? 단짱단짱의 주인공이 되어보세요!<br><br>
+        <span style="font-size: 14px; color: #999;">재연쌤이 만들었음٩(•◡•)۶<br>
+        <a href="https://blog.naver.com/gajae_ssam" style="color: #999; text-decoration: underline;">(출처: blog.naver.com/gajae_ssam)</a></span>
+    </div>
+    <button id="startButton">게임 시작</button>
+</div>
+
+<div id="endScreen">
+    <h1 id="endTitle">🎉 축하합니다! 🎉</h1>
+    <div id="endDescription">
+        당신은 드디어 "단짱단짱"의 전설로 임명되었습니다! 🏆✨<br>
+        이 놀라운 집중력과 번뜩이는 관찰력은 재연쌤의 가정 수업 역사에 남을 거예요.<br>
+        정말 대단해요👏👏👏
+    </div>
+    <button id="restartButton">다시 시작하기</button>
+</div>
+
+<div id="gameContainer">
+    <div id="level">1단계</div>
+    <div id="timer">시간: 5</div>
+    <div id="target">다른 단어를 찾으세요!</div>
+    <div id="grid"></div>
+</div>
+
+<script>
+const timeoutMessages = [
+    "⏰ 아쉽습니다! 😢\n다음 번엔 더 빠른 눈과 손을 보여주세요 👀💨",
+    "⏰ 땡! 시간 초과! 😅\n다시 도전해보세요 🔄",
+    "⏰ 오 마이 갓! ⏰\n이대로 주저앉을 건가요?!",
+    "⏰ 아쉽습니다! 시간이 초과됐어요."
+];
+
+const failMessages = [
+    "엥? 손가락에 기름 묻었나요? 🍳",
+    "앗차! 내 집중력 어디 갔어? 🔍",
+    "오! 아쉽네요. 다시 도전? 🔄",
+    "엥? 손이 미끄러졌나요? 😲",
+    "앗! 틀렸어요. 한 번 더! 💪"
+];
+
+const levelWords = {
+    1: [
+        { common: "식사", different: "식단", commonCount: 3, differentCount: 1 },
+        { common: "부부", different: "부모", commonCount: 3, differentCount: 1 },
+        { common: "소비", different: "소득", commonCount: 3, differentCount: 1 },
+        { common: "자원", different: "자연", commonCount: 3, differentCount: 1 }
+    ],
+    2: [
+        { common: "수신자", different: "송신자", commonCount: 8, differentCount: 1 },
+        { common: "진로", different: "직업", commonCount: 8, differentCount: 1 },
+        { common: "소리", different: "소음", commonCount: 8, differentCount: 1 }
+    ],
+    3: [
+        { common: "생애", different: "생활", commonCount: 15, differentCount: 1 },
+        { common: "의류", different: "의복", commonCount: 15, differentCount: 1 }
+    ],
+    4: [
+        { common: "성장", different: "성징", commonCount: 24, differentCount: 1 },
+        { common: "마", different: "모", commonCount: 24, differentCount: 1 },
+        { common: "면", different: "견", commonCount: 24, differentCount: 1 }
+    ],
+    5: [
+        { common: "냉방", different: "난방", commonCount: 35, differentCount: 1 },
+        { common: "시간", different: "시기", commonCount: 35, differentCount: 1 },
+        { common: "거풍", different: "거품", commonCount: 35, differentCount: 1 }
+    ],
+    6: [
+        { common: "난소", different: "난자", commonCount: 48, differentCount: 1 },
+        { common: "동조", different: "동선", commonCount: 48, differentCount: 1 }
+    ],
+    7: [
+        { common: "소비", different: "쇼핑", commonCount: 63, differentCount: 1 },
+        { common: "자원", different: "지원", commonCount: 63, differentCount: 1 }
+    ]
+};
+
+let currentLevel = 1;
+let timeLeft = 5;
+let timer;
+
+function startGame() {
+    currentLevel = 1;
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('endScreen').style.display = 'none';
+    document.getElementById('gameContainer').style.display = 'block';
+    setupLevel(currentLevel);
+}
+
+function getGridSize(level) {
+    return level + 1;
+}
+
+function setupLevel(level) {
+    clearInterval(timer);
+    timeLeft = 5;
+    const gridSize = getGridSize(level);
+    
+    document.getElementById('level').textContent = `${level}단계`;
+    document.getElementById('timer').textContent = `시간: ${timeLeft}`;
+    
+    const grid = document.getElementById('grid');
+    grid.style.gridTemplateColumns = `repeat(${gridSize}, 50px)`;
+    grid.innerHTML = '';
+    
+    let levelData;
+    if (Array.isArray(levelWords[level])) {
+        levelData = levelWords[level][Math.floor(Math.random() * levelWords[level].length)];
+    } else {
+        levelData = levelWords[level];
+    }
+    
+    let words = Array(levelData.commonCount).fill(levelData.common);
+    words = words.concat(Array(levelData.differentCount).fill(levelData.different));
+    
+    words.sort(() => Math.random() - 0.5);
+    
+    words.forEach(word => {
+        const cell = document.createElement('div');
+        cell.className = 'word-cell';
+        cell.textContent = word;
+        cell.addEventListener('click', () => checkWord(cell, word, levelData.different));
+        grid.appendChild(cell);
+    });
+    
+    startTimer();
+}
+
+function checkWord(cell, word, targetWord) {
+    if (word === targetWord) {
+        cell.classList.add('correct');
+        setTimeout(() => {
+            if (currentLevel < 7) {
+                currentLevel++;
+                setupLevel(currentLevel);
+            } else {
+                document.getElementById('gameContainer').style.display = 'none';
+                document.getElementById('endScreen').style.display = 'block';
+            }
+        }, 500);
+    } else {
+        cell.classList.add('wrong');
+        clearInterval(timer);
+        const randomMessage = failMessages[Math.floor(Math.random() * failMessages.length)];
+        setTimeout(() => {
+            alert(randomMessage);
+            currentLevel = 1;
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }, 200);
+    }
+}
+
+function startTimer() {
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = `시간: ${timeLeft}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            const randomMessage = timeoutMessages[Math.floor(Math.random() * timeoutMessages.length)];
+            alert(randomMessage);
+            currentLevel = 1;
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
+    }, 1000);
+}
+
+document.getElementById('startButton').addEventListener('click', startGame);
+document.getElementById('restartButton').addEventListener('click', () => {
+    currentLevel = 1;
+    startGame();
+});
+</script></body></html>
